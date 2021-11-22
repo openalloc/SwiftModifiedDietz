@@ -59,11 +59,25 @@ It's often convenient to declare your own derivative type:
 typealias MD = ModifiedDietz<Float>
 ```
 
+## Initialization
+
+- `init?(DateInterval, ModifiedDietz<T>.MarketValueDelta, ModifiedDietz<T>.CashflowMap, epsilon: T)` - Initialize a ModifiedDietz with the specified parameters.
+
+Initialization will fail and return `nil` if provided nonsense parameters, such as a period with zero duration.
+
+The initialization values are also available as properties:
+
+- `let period: DateInterval` - The period for which performance will be calculated. NOTE: `start < x <= end`; exclusive of start; inclusive of end.
+
+- `let marketValue: ModifiedDietz<T>.MarketValueDelta` - The beginning and ending market value.
+
+- `let rawCashflowMap: ModifiedDietz<T>.CashflowMap` - Optional map of cash flows for dates within the period
+
+- `let epsilon: T` - Optional precision for comparing values that are very close to one another.
+
 ## Instance Properties and Methods
 
 Computed properties are lazy, meaning that they are only calculated when first needed.
-
-- `init(DateInterval, ModifiedDietz<T>.MarketValueDelta, ModifiedDietz<T>.CashflowMap, T)` - Initialize a ModifiedDietz with the specified parameters.
 
 - `var adjustedNetCashflow: T` - Adjusted Net Cash Flow is the sum of each flow `Fi` multiplied by its weight `Wi`. Also known as total time-weighted cash flows (ttwcf)
 
@@ -71,11 +85,7 @@ Computed properties are lazy, meaning that they are only calculated when first n
 
 - `var averageCapital: T` - Average capital over the period.
 
-- `let epsilon: T` - Optional precision for comparing values that are very close to one another.
-
 - `var gainOrLoss: T` - Total gain (or loss) over period, independent of cash flow.
-
-- `let marketValue: ModifiedDietz<T>.MarketValueDelta` - The beginning and ending market value.
 
 - `var netCashflowMap: ModifiedDietz<T>.CashflowMap` - Valid map of cash flows for period. Includes non-zero cashflows that are within `period.start < $0 <= period.end`
 
@@ -84,10 +94,6 @@ Computed properties are lazy, meaning that they are only calculated when first n
 - `var orderedCashflowDates: [Date]` - Ordered list of valid cash flow dates.
 
 - `var performance: T` - The calculated rate of return (R). Note: can return `NaN/Inf` if the sum of the starting market value and adjusted net cash flow is `0`.
-
-- `let period: DateInterval` - The period for which performance will be calculated. NOTE: `start < x <= end`; exclusive of start; inclusive of end.
-
-- `let rawCashflowMap: ModifiedDietz<T>.CashflowMap` - Optional map of cash flows for dates within the period
 
 ## See Also
 

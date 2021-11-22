@@ -45,10 +45,11 @@ public final class ModifiedDietz<T: BinaryFloatingPoint> {
     public let epsilon: T
     
     /// Initialize a `ModifiedDietz` with the specified parameters.
-    public init(_ period: DateInterval,
-                _ marketValue: MarketValueDelta,
-                _ rawCashflowMap: CashflowMap = [:],
-                _ epsilon: T = 0.0001) {
+    public init?(_ period: DateInterval,
+                 _ marketValue: MarketValueDelta,
+                 _ rawCashflowMap: CashflowMap = [:],
+                 epsilon: T = 0.0001) {
+        guard period.start < period.end, (0.0...1.0).contains(epsilon) else { return nil }
         self.period = period
         self.marketValue = marketValue
         self.rawCashflowMap = rawCashflowMap
