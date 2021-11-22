@@ -22,7 +22,7 @@ let end = df.date(from: "2020-06-30T12:00:00Z")!
 let period = DateInterval(start: beg, end: end)
 let mv = MD.MarketValueDelta(105, 100)
 let cf: MD.CashflowMap = [mid: -10.0]
-let md = MD(period, mv, cf)
+let md = MD(period, mv, cf)!
 
 print("\(md.performance * 100)%")
 
