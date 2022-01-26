@@ -61,6 +61,10 @@ typealias MD = ModifiedDietz<Float>
 
 ## Initialization
 
+Two initializers are provided, one more explicit than the other, but functionally equivalent:
+
+- `init?(period: DateInterval, startValue: T, endValue: T, cashflowMap: [Date: T], epsilon: T)` - Conveniently initialize a ModifiedDietz with explicit parameters.
+
 - `init?(DateInterval, ModifiedDietz<T>.MarketValueDelta, ModifiedDietz<T>.CashflowMap, epsilon: T)` - Initialize a ModifiedDietz with the specified parameters.
 
 Initialization will fail and return `nil` if provided nonsense parameters, such as a period with zero duration.

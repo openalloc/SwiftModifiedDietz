@@ -238,4 +238,19 @@ final class MDTests: XCTestCase {
         XCTAssertEqual(0.05, md.performance, accuracy: 0.001)
         //print("\(md.performance * 100)%")
     }
+    
+    func testConvenienceInit() throws {
+        typealias MD = ModifiedDietz<Double>
+        let df = ISO8601DateFormatter()
+        let beg = df.date(from: "2020-06-01T12:00:00Z")!
+        let mid = df.date(from: "2020-06-16T00:00:00Z")!
+        let end = df.date(from: "2020-06-30T12:00:00Z")!
+
+        let period = DateInterval(start: beg, end: end)
+        let cf: MD.CashflowMap = [mid: -10.0]
+        let md = MD(period: period, startValue: 105, endValue: 100, cashflowMap: cf)!
+
+        XCTAssertEqual(0.05, md.performance, accuracy: 0.001)
+        //print("\(md.performance * 100)%")
+    }
 }

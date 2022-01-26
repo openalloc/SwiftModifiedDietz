@@ -44,6 +44,16 @@ public final class ModifiedDietz<T: BinaryFloatingPoint> {
     /// Optional precision for comparing values that are very close to one another.
     public let epsilon: T
     
+    /// Conveniently initialize a `ModifiedDietz` with explicit parameters.
+    public convenience init?(period: DateInterval,
+                             startValue: T,
+                             endValue: T,
+                             cashflowMap: CashflowMap = [:],
+                             epsilon: T = 0.0001) {
+        let mvd = MarketValueDelta(start: startValue, end: endValue)
+        self.init(period, mvd, cashflowMap, epsilon: epsilon)
+    }
+    
     /// Initialize a `ModifiedDietz` with the specified parameters.
     public init?(_ period: DateInterval,
                  _ marketValue: MarketValueDelta,
