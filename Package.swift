@@ -23,7 +23,8 @@ let package = Package(
     products: [
         .library(
             name: "ModifiedDietz",
-            targets: ["ModifiedDietz"]),
+            targets: ["ModifiedDietz"]
+        ),
     ],
     dependencies: [
     ],
@@ -31,10 +32,12 @@ let package = Package(
         .target(
             name: "ModifiedDietz",
             dependencies: [],
-            path: "Sources"),
+            path: "Sources"
+        ),
         .testTarget(
             name: "ModifiedDietzTests",
             dependencies: ["ModifiedDietz"],
-            path: "Tests"),
+            path: "Tests"
+        ),
     ]
 )

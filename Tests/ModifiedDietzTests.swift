@@ -23,14 +23,14 @@ final class MDTests: XCTestCase {
     let df = ISO8601DateFormatter()
 
     typealias MD = ModifiedDietz<Double>
-    
+
     func testBadInitPeriod() throws {
         let beg = df.date(from: "2020-06-01T12:00:00Z")!
         let period = DateInterval(start: beg, end: beg)
         let mv = MD.MarketValueDelta(start: 100, end: 100)
         XCTAssertNil(MD(period, mv))
     }
-    
+
     func testBadInitEpsilon() throws {
         let beg = df.date(from: "2020-06-01T12:00:00Z")!
         let end = df.date(from: "2020-06-30T12:00:00Z")!
@@ -38,7 +38,7 @@ final class MDTests: XCTestCase {
         let mv = MD.MarketValueDelta(start: 100, end: 100)
         XCTAssertNil(MD(period, mv, epsilon: 1.01))
     }
-    
+
     func testNoChange() throws {
         let beg = df.date(from: "2020-06-01T12:00:00Z")!
         let end = df.date(from: "2020-06-30T12:00:00Z")!
@@ -89,7 +89,7 @@ final class MDTests: XCTestCase {
         let md = MD(period, mv, t1)!
         XCTAssertEqual(0.0, md.performance, accuracy: 0.001)
     }
-    
+
     func testNoChangeWithFlowAtEnd() throws {
         let beg = df.date(from: "2020-06-01T12:00:00Z")!
         let transactedAt1 = df.date(from: "2020-06-30T12:00:00Z")!
@@ -113,7 +113,7 @@ final class MDTests: XCTestCase {
         XCTAssertEqual(-5, md.adjustedNetCashflow, accuracy: 0.01) // at halfway point
         XCTAssertEqual(0.05, md.performance, accuracy: 0.001)
     }
-    
+
     func testNegativeReturnOneFlowAtMidway() throws {
         let beg = df.date(from: "2020-06-01T12:00:00Z")!
         let transactedAt1 = df.date(from: "2020-06-16T00:00:00Z")!
@@ -142,7 +142,7 @@ final class MDTests: XCTestCase {
         XCTAssertEqual(-663.28, md.adjustedNetCashflow, accuracy: 0.01)
         XCTAssertEqual(-0.175, md.performance, accuracy: 0.001)
     }
-    
+
     func testIgnoreTransactionNotInPeriod() throws {
         let beg = df.date(from: "2020-06-01T12:00:00Z")!
         let end = df.date(from: "2020-06-30T12:00:00Z")!
@@ -153,7 +153,7 @@ final class MDTests: XCTestCase {
         let md = MD(period, mv, t1)!
         XCTAssertEqual(0, md.performance, accuracy: 0.001)
     }
-    
+
     func testIgnoreTransactionWithZeroAmount() throws {
         let beg = df.date(from: "2020-06-01T12:00:00Z")!
         let transactedAt1 = df.date(from: "2020-06-30T12:00:0Z")!
@@ -165,19 +165,19 @@ final class MDTests: XCTestCase {
         XCTAssertEqual(0, md.performance, accuracy: 0.001)
         XCTAssertEqual(0, md.netCashflowMap.count)
     }
-    
+
     func testLiquidateAllNearStart() throws {
-        let begPeriod = df.date(from: "2020-10-01T19:00:00Z")!  // period start
-        let transactedAt = df.date(from: "2020-10-01T21:00:00Z")!  // two hours after start
-        let endPeriod = df.date(from: "2020-11-01T19:00:00Z")!  // period end
+        let begPeriod = df.date(from: "2020-10-01T19:00:00Z")! // period start
+        let transactedAt = df.date(from: "2020-10-01T21:00:00Z")! // two hours after start
+        let endPeriod = df.date(from: "2020-11-01T19:00:00Z")! // period end
 
         let period = DateInterval(start: begPeriod, end: endPeriod)
         let mv = MD.MarketValueDelta(start: 30000, end: 0)
         let rawCashflows: MD.CashflowMap = [
-            transactedAt: 0,    // sell security for cash
-            endPeriod: -33000,  //always flow out at end of period
+            transactedAt: 0, // sell security for cash
+            endPeriod: -33000, // always flow out at end of period
         ]
-        
+
         let md = MD(period, mv, rawCashflows)!
         XCTAssertEqual(3000, md.gainOrLoss)
         XCTAssertEqual(30000, md.averageCapital)
@@ -186,43 +186,43 @@ final class MDTests: XCTestCase {
     }
 
     func testLiquidateAllHalfway() throws {
-        let begPeriod = df.date(from: "2020-09-01T19:00:00Z")!  // period start
-        let transactedAt = df.date(from: "2020-09-15T19:00:00Z")!  // halfway point
-        let endPeriod = df.date(from: "2020-10-01T19:00:00Z")!  // period end
+        let begPeriod = df.date(from: "2020-09-01T19:00:00Z")! // period start
+        let transactedAt = df.date(from: "2020-09-15T19:00:00Z")! // halfway point
+        let endPeriod = df.date(from: "2020-10-01T19:00:00Z")! // period end
 
         let period = DateInterval(start: begPeriod, end: endPeriod)
         let mv = MD.MarketValueDelta(start: 30000, end: 0)
         let rawCashflows: MD.CashflowMap = [
-            transactedAt: 0,    // sell security for cash
-            endPeriod: -33000,  //always flow out at end of period
+            transactedAt: 0, // sell security for cash
+            endPeriod: -33000, // always flow out at end of period
         ]
-        
+
         let md = MD(period, mv, rawCashflows)!
         XCTAssertEqual(3000, md.gainOrLoss)
         XCTAssertEqual(30000, md.averageCapital)
         XCTAssertEqual(0.1, md.performance, accuracy: 0.001)
         XCTAssertEqual(1, md.netCashflowMap.count)
     }
-    
+
     func testLiquidateAllNearEnd() throws {
-        let begPeriod = df.date(from: "2020-10-01T19:00:00Z")!  // period start
-        let transactedAt = df.date(from: "2020-11-01T17:00:00Z")!  // two hours before end
-        let endPeriod = df.date(from: "2020-11-01T19:00:00Z")!  // period end
+        let begPeriod = df.date(from: "2020-10-01T19:00:00Z")! // period start
+        let transactedAt = df.date(from: "2020-11-01T17:00:00Z")! // two hours before end
+        let endPeriod = df.date(from: "2020-11-01T19:00:00Z")! // period end
 
         let period = DateInterval(start: begPeriod, end: endPeriod)
         let mv = MD.MarketValueDelta(start: 30000, end: 0)
         let rawCashflows: MD.CashflowMap = [
-            transactedAt: 0,    // sell security for cash
-            endPeriod: -33000,  //always flow out at end of period
+            transactedAt: 0, // sell security for cash
+            endPeriod: -33000, // always flow out at end of period
         ]
-        
+
         let md = MD(period, mv, rawCashflows)!
         XCTAssertEqual(3000, md.gainOrLoss)
         XCTAssertEqual(30000, md.averageCapital)
         XCTAssertEqual(0.1, md.performance, accuracy: 0.001)
         XCTAssertEqual(1, md.netCashflowMap.count)
     }
-    
+
     func testExample() throws {
         typealias MD = ModifiedDietz<Double>
         let df = ISO8601DateFormatter()
@@ -236,9 +236,9 @@ final class MDTests: XCTestCase {
         let md = MD(period, mv, cf)!
 
         XCTAssertEqual(0.05, md.performance, accuracy: 0.001)
-        //print("\(md.performance * 100)%")
+        // print("\(md.performance * 100)%")
     }
-    
+
     func testConvenienceInit() throws {
         typealias MD = ModifiedDietz<Double>
         let df = ISO8601DateFormatter()
@@ -251,6 +251,6 @@ final class MDTests: XCTestCase {
         let md = MD(period: period, startValue: 105, endValue: 100, cashflowMap: cf)!
 
         XCTAssertEqual(0.05, md.performance, accuracy: 0.001)
-        //print("\(md.performance * 100)%")
+        // print("\(md.performance * 100)%")
     }
 }

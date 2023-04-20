@@ -18,7 +18,6 @@
 
 import Foundation
 
-
 extension ModifiedDietz: CustomStringConvertible {
     public var description: String {
         var buffer: [String] = []
