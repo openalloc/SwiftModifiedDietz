@@ -19,7 +19,7 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftModifiedDietz",
-    platforms: [.macOS(.v10_12)], // needed for DateInterval support
+    platforms: [.macOS(.v10_13)], // needed for DateInterval support
     products: [
         .library(
             name: "ModifiedDietz",
